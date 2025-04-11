@@ -1,22 +1,43 @@
-import { useState } from "react"
+import { useContext, useEffect, useState } from "react"
+import Data from "../Contexts/Data";
+import axios from "axios";
 
 export default function CreateForm() {
-    const [input, setInput] = useState({ company: '', role: '', comment: '' });
+    const inputDefault = { company: '', role: '', comment: '', timestamp: '', date: '', response: false, interview: false, rejection: false }
+    const [input, setInput] = useState(inputDefault);
+    const { applications, setApplications } = useContext(Data);
+
 
     const handleInput = e => {
         const inputName = e.target.name;
         // console.log(inputName)
-        console.log(input[inputName]);
+        // console.log(input[inputName]);
         setInput(inn => ({
             ...inn,
             [inputName]: e.target.value
         }))
     }
 
+
+
     const save = _ => {
         console.log(input);
-        setInput({ company: '', role: '', comment: '' });
+        const time = new Date();
+        const date = time.getFullYear() + '-' + time.getMonth().toString().padStart(2, '0') + '-' + time.getDate().toString().padStart(2, '0');
+        input.company !== '' && setApplications(applications => ([...applications, { ...input, timestamp: time.getTime().toString(), date: date }]));
+
+        setInput(inputDefault);
+        // axios.post('http://localhost/test-php/back.php', 'hello!', {
+        //     headers: {
+        //         'Content-Type': 'application/json'
+        //     }
+        // });
+
     }
+
+    useEffect(_ => {
+        console.log(applications);
+    }, [applications])
 
 
     return (
